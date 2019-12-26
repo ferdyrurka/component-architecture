@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  symfony_monolith:
+    image: nginx:latest
+    ports:
+      - '8000:80'
+    volumes:
+      - './symfony-monolith:/app'
+      - './.docker/local/symfony_monolith/symfony_monolith.conf:/etc/nginx/conf.d/symfony_monolith.conf'
+    links:
+      - fpm
+      - master_db
+    container_name: 'component_architecture_sf_monolith'
+
+  fpm:
+    image: php:7.4-component-architecture
+    build:
+      context: './.docker/local/symfony_monolith'
+      dockerfile: fpm.Dockerfile
+    volumes:
+      - './symfony-monolith:/app'
+    container_name: 'component_architecture_fpm'
+
+  master_db:
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=YOUR_ROOT_PASSWORD
+      - MYSQL_DATABASE=component
+    volumes:
+      - mysql_master:/var/lib/mysql
+    container_name: 'component_architecture_master_db'
+
+  master_projection_db:
+    image: mysql:5.7
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=YOUR_ROOT_PASSWORD
+      - MYSQL_DATABASE=component_projection
+    volumes:
+      - mysql_projection:/var/lib/mysql
+    container_name: 'component_architecture_master_projection_db'
+
+volumes:
+  mysql_master:
+    driver: local
+  mysql_projection:
+    driver: local
