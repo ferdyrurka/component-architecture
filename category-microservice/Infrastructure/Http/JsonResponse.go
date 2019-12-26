@@ -32,4 +32,3 @@ func SendCustomJsonResponse(code int, v interface{}, w http.ResponseWriter) {
 	w.WriteHeader(code)
 	_, _ = w.Write(b)
 }
-

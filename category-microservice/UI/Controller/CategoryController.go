@@ -49,4 +49,3 @@ func CheckExistCategory(w http.ResponseWriter, r *http.Request) {
 
 	Http.SendCustomJsonResponse(http.StatusOK, Presenter.CheckExist(count), w)
 }
-
