@@ -21,7 +21,7 @@ func NewCategoryRepository() CategoryRepositoryInterface {
 }
 
 func (c CategoryRepository) Save(category Entity.Category) error {
-	stmt, err := c.db.Prepare("INSERT INTO " + c.table + " VALUES (?, ?)")
+	stmt, err := c.db.Prepare("INSERT INTO " + c.table + " VALUES (?, ?, NOW())")
 
 	if err != nil {
 		log.Println("Prepare save, error message: " + err.Error())
@@ -61,7 +61,7 @@ func (c CategoryRepository) GetCountByName(name string) (int, error) {
 }
 
 func (c CategoryRepository) FindAll() (*[]Entity.Category, error) {
-	result, err := c.db.Query("SELECT * FROM category")
+	result, err := c.db.Query("SELECT id, name FROM " + c.table)
 
 	if err != nil {
 		log.Println("Exec GetAll, error message: " + err.Error())
