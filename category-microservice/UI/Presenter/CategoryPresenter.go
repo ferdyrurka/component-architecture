@@ -8,10 +8,10 @@ func CreateCategory(id string) map[string]interface{} {
 	return b
 }
 
-func CheckExist(count int) map[string]interface{} {
+func CheckExist(result bool) map[string]interface{} {
 	b := make(map[string]interface{})
 	b["success"] = true
-	b["result"] = count
+	b["result"] = result
 
 	return b
 }

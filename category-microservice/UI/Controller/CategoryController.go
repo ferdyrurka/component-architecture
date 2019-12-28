@@ -40,12 +40,12 @@ func CheckExistCategory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	dto := DTO.CategoryNameDTO{Name: vars["name"]}
 
-	count, err := UseCase.CheckExistCategory(dto)
+	result, err := UseCase.CheckExistCategory(dto)
 
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	Http.SendCustomJsonResponse(http.StatusOK, Presenter.CheckExist(count), w)
+	Http.SendCustomJsonResponse(http.StatusOK, Presenter.CheckExist(result), w)
 }
