@@ -7,7 +7,7 @@ class BookInput
 {
     private string $name;
 
-    private string$categoryId;
+    private string $categoryId;
 
     public function __construct(string $name, string $categoryId)
     {

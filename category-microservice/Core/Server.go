@@ -12,6 +12,8 @@ func initServer() {
 	if err != nil {
 		panic("Server error: " + err.Error())
 	}
+
+	fmt.Println("Server disabled!")
 }
 
 func ServerStart() {

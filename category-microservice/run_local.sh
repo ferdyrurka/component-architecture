@@ -1,1 +1,0 @@
-APP_PORT=8080 MYSQL_URL="root:YOUR_ROOT_PASSWORD@/component" go run main.go

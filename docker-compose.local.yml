@@ -8,41 +8,58 @@ services:
     volumes:
       - './symfony-monolith:/app'
       - './.docker/local/symfony_monolith/symfony_monolith.conf:/etc/nginx/conf.d/symfony_monolith.conf'
+    depends_on:
+      - fpm
     links:
       - fpm
-      - master_db
-    container_name: 'component_architecture_sf_monolith'
+    container_name: 'component-architecture-monolith-nginx'
 
   fpm:
     image: php:7.4-component-architecture
     build:
       context: './.docker/local/symfony_monolith'
       dockerfile: fpm.Dockerfile
+    links:
+      - master_db
+      - master_projection_db
     volumes:
       - './symfony-monolith:/app'
-    container_name: 'component_architecture_fpm'
+    container_name: 'component-architecture-monolith-fpm'
 
   master_db:
     image: mysql:5.7
     ports:
-      - 3306:3306
+      - '3306:3306'
     environment:
       - MYSQL_ROOT_PASSWORD=YOUR_ROOT_PASSWORD
       - MYSQL_DATABASE=component
     volumes:
       - mysql_master:/var/lib/mysql
-    container_name: 'component_architecture_master_db'
+    container_name: 'component-architecture-master-db'
 
   master_projection_db:
     image: mysql:5.7
     ports:
-      - 3307:3306
+      - '3307:3306'
     environment:
       - MYSQL_ROOT_PASSWORD=YOUR_ROOT_PASSWORD
       - MYSQL_DATABASE=component_projection
     volumes:
       - mysql_projection:/var/lib/mysql
-    container_name: 'component_architecture_master_projection_db'
+    container_name: 'component-architecture-master-projection-db'
+
+  category:
+    image: go:component-architecture
+    build:
+      context: './'
+      dockerfile: './.docker/local/category-microservice/Dockerfile'
+    links:
+      - master_db
+    depends_on:
+      - master_db
+    ports:
+      - '8001:8080'
+    container_name: 'component-architecture-category'
 
 volumes:
   mysql_master:

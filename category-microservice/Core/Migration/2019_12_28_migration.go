@@ -26,7 +26,12 @@ func Migrate20191228()  {
 	db.Query("ALTER TABLE category ADD COLUMN created_at DATE")
 	db.Query("UPDATE TABLE category SET created_at = NOW() WHERE created_at IS NULL")
 	db.Query("ALTER TABLE category MODIFY created_at NOT NULL")
-	db.Query("CREATE TABLE book_category(category_id VARCHAR(255) NOT NULL, book_id VARCHAR(255) NOT NULL, FOREIGN KEY (category_id) REFERENCES category (id), FOREIGN KEY (book_id) REFERENCES book (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;")
+
+	_, err = db.Query("CREATE TABLE book_category(category_id VARCHAR(255) NOT NULL, book_id VARCHAR(255) NOT NULL, FOREIGN KEY (category_id) REFERENCES category (id), FOREIGN KEY (book_id) REFERENCES book (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;")
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
 
 	fmt.Println("Migration 2019-12-28 successful, save migration info in database...")
 	insertMigration("2019-12-28")

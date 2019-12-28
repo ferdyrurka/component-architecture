@@ -1,0 +1,1 @@
+MYSQL_URL="root:YOUR_ROOT_PASSWORD@tcp(master_db:3306)/component" go run migrate.go
