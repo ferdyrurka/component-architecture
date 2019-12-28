@@ -49,3 +49,14 @@ func CheckExistCategory(w http.ResponseWriter, r *http.Request) {
 
 	Http.SendCustomJsonResponse(http.StatusOK, Presenter.CheckExist(result), w)
 }
+
+func FindAllCategories(w http.ResponseWriter, r *http.Request) {
+	result, err := UseCase.FindAllCategories()
+
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	Http.SendCustomJsonResponse(http.StatusOK, Presenter.FindAll(result), w)
+}

@@ -59,3 +59,24 @@ func (c CategoryRepository) GetCountByName(name string) (int, error) {
 
 	return count, nil
 }
+
+func (c CategoryRepository) FindAll() (*[]Entity.Category, error) {
+	result, err := c.db.Query("SELECT * FROM category")
+
+	if err != nil {
+		log.Println("Exec GetAll, error message: " + err.Error())
+		return nil, err
+	}
+
+	var categories []Entity.Category
+
+	for result.Next() {
+		var id string
+		var name string
+
+		result.Scan(&id, &name)
+		categories = append(categories, Entity.Category{Id: id, Name: name})
+	}
+
+	return &categories, nil
+}
