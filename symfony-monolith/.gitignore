@@ -5,3 +5,8 @@
 #IDE
 .idea/
 .env
+
+#Tests
+
+/phpunit.xml
+.phpunit.result.cache

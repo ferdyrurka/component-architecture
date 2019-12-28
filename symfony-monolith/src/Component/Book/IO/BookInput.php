@@ -7,9 +7,9 @@ class BookInput
 {
     private string $name;
 
-    private int $categoryId;
+    private string$categoryId;
 
-    public function __construct(string $name, int $categoryId)
+    public function __construct(string $name, string $categoryId)
     {
         $this->name = $name;
         $this->categoryId = $categoryId;
@@ -25,12 +25,12 @@ class BookInput
         $this->name = $name;
     }
 
-    public function getCategoryId(): int
+    public function getCategoryId(): string
     {
         return $this->categoryId;
     }
 
-    public function setCategoryId(int $categoryId): void
+    public function setCategoryId(string $categoryId): void
     {
         $this->categoryId = $categoryId;
     }

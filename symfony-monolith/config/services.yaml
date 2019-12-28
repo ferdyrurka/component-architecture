@@ -14,3 +14,19 @@ services:
 
     Symfony\Component\String\Slugger\AsciiSlugger:
         class: Symfony\Component\String\Slugger\AsciiSlugger
+
+    sync.http.category.communication:
+        class: App\Infrastructure\Microservices\Communication\Sync\HttpCommunication
+        public: true
+        autowire: false
+        arguments:
+            - '@http_client'
+            - '%env(resolve:CATEGORY_MICROSERVICE_URL)%'
+            - 1
+
+    App\Component\Category\API\CategoryApiInterface:
+        class: App\Component\Category\API\CategoryApi
+        autowire: false
+        public: true
+        arguments:
+            - '@sync.http.category.communication'
