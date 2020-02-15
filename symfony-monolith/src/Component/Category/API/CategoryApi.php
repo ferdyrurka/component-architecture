@@ -6,12 +6,13 @@ namespace App\Component\Category\API;
 use App\Component\Book\IO\BookIdInput;
 use App\Component\Category\Exception\CategoryWasFoundException;
 use App\Component\Category\Exception\RuntimeException;
-use App\Component\Category\IO\CategoryIdInput;
+use App\Component\Category\IO\CategoriesIdInput;
+use App\Component\Category\IO\CategoriesOutput;
 use App\Component\Category\IO\CategoryIdOutput;
 use App\Component\Category\IO\CategoryInput;
 use App\Infrastructure\Microservices\Communication\CommunicationInterface;
 
-class CategoryApi implements CategoryApiInterface
+final class CategoryApi implements CategoryApiInterface
 {
     private CommunicationInterface $communication;
 
@@ -20,7 +21,7 @@ class CategoryApi implements CategoryApiInterface
         $this->communication = $communication;
     }
 
-    public function addBook(BookIdInput $bookIdInput, CategoryIdInput $categoryIdInput): void
+    public function addBook(BookIdInput $bookIdInput, CategoriesIdInput $categoriesIdInput): void
     {
 
     }
@@ -52,5 +53,26 @@ class CategoryApi implements CategoryApiInterface
         }
 
         return new CategoryIdOutput((string) $resultCreate['id']);
+    }
+
+    public function findAll(): CategoriesOutput
+    {
+        $allCategories = $this->communication->get('find-all');
+
+        if (!isset($allCategories['result'], $allCategories['success']) || $allCategories['success'] === false) {
+            throw new RuntimeException(
+                'findAll',
+                'find-all',
+                sprintf('Internal server error with category api! Response content: %s',json_encode($allCategories))
+            );
+        }
+
+        $categoriesOutput = new CategoriesOutput();
+
+        foreach ($allCategories['result'] as $category) {
+            $categoriesOutput->addCategory($category['Id'], $category['Name']);
+        }
+
+        return $categoriesOutput;
     }
 }

@@ -22,7 +22,7 @@ class CreateBookController extends AbstractController
      */
     public function createView(Request $request): array
     {
-        $form = $this->createForm(CreateBookForm::class, new BookInput('', 0));
+        $form = $this->createForm(CreateBookForm::class, new BookInput('', []));
         $form->handleRequest($request);
 
         return [
@@ -39,7 +39,7 @@ class CreateBookController extends AbstractController
      */
     public function create(Request $request, BookApiInterface $bookApi): Response
     {
-        $form = $this->createForm(CreateBookForm::class, new BookInput('', 0));
+        $form = $this->createForm(CreateBookForm::class, new BookInput('', []));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -48,7 +48,7 @@ class CreateBookController extends AbstractController
             return $this->redirect('/');
         }
 
-        return $this->forward(CreateBookController::class . '::createView', [
+        return $this->forward(__CLASS__ . '::createView', [
             'request' => $request,
         ]);
     }

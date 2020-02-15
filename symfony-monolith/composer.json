@@ -23,7 +23,9 @@
         "symfony/validator": "5.0.*",
         "symfony/yaml": "5.0.*",
         "ramsey/uuid": "3.9.1",
-        "ext-json": "*"
+        "ext-json": "*",
+        "php-amqplib/php-amqplib": "2.11.*",
+        "myclabs/php-enum": "1.7.*"
     },
     "require-dev": {
         "symfony/debug-pack": "*",

@@ -4,10 +4,11 @@ namespace App\Component\Book\Core\UseCase;
 
 use App\Component\Book\Core\Factory\BookFactory;
 use App\Component\Book\Core\Repository\BookRepositoryInterface;
-use App\Infrastructure\Slugger\SluggerInterface;
+use App\Component\Book\IO\BookInput;
+use App\Infrastructure\EventDispatcher\EventDispatcherInterface;
 use App\Infrastructure\UnityOfWork\UnityOfWorkInterface;
 
-class CreateBookApplicationService
+final class CreateBookApplicationService
 {
     private BookFactory $bookFactory;
 
@@ -15,26 +16,23 @@ class CreateBookApplicationService
 
     private UnityOfWorkInterface $unityOfWork;
 
-    private SluggerInterface $slugger;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         BookFactory $bookFactory,
         BookRepositoryInterface $bookRepository,
         UnityOfWorkInterface $unityOfWork,
-        SluggerInterface $slugger
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->bookFactory = $bookFactory;
         $this->bookRepository = $bookRepository;
         $this->unityOfWork = $unityOfWork;
-        $this->slugger = $slugger;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function create(string $name): string
+    public function create(BookInput $bookInput): string
     {
-        $book = $this->bookFactory->create(
-            $name,
-            $this->slugger->slug($name)
-        );
+        $book = $this->bookFactory->create($bookInput->getName());
 
         $this->bookRepository->add($book);
         $this->unityOfWork->commit();
