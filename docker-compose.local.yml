@@ -21,7 +21,6 @@ services:
       dockerfile: fpm.Dockerfile
     links:
       - master_db
-      - master_projection_db
     volumes:
       - './symfony-monolith:/app'
     container_name: 'component-architecture-monolith-fpm'
@@ -37,17 +36,6 @@ services:
       - mysql_master:/var/lib/mysql
     container_name: 'component-architecture-master-db'
 
-  master_projection_db:
-    image: mysql:5.7
-    ports:
-      - '3307:3306'
-    environment:
-      - MYSQL_ROOT_PASSWORD=YOUR_ROOT_PASSWORD
-      - MYSQL_DATABASE=component_projection
-    volumes:
-      - mysql_projection:/var/lib/mysql
-    container_name: 'component-architecture-master-projection-db'
-
   category:
     image: go:component-architecture
     build:
@@ -60,6 +48,15 @@ services:
     ports:
       - '8001:8080'
     container_name: 'component-architecture-category'
+
+  rabbitMQ:
+    image: rabbitmq:3.8.2-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbitmq_admin
+      - RABBITMQ_DEFAULT_PASS=password
+    ports:
+      - '15672:15672'
+    container_name: 'component-architecture-rabbitmq'
 
 volumes:
   mysql_master:
