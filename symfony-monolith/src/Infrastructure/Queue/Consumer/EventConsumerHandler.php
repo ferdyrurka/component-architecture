@@ -8,6 +8,7 @@ use App\Infrastructure\EventDispatcher\EventDispatcherInterface;
 use App\Infrastructure\Queue\Exception\RuntimeException;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Exception;
 
@@ -17,16 +18,20 @@ class EventConsumerHandler implements ConsumerHandlerInterface
 
     private EventDispatcherInterface $eventDispatcher;
 
+    private LoggerInterface $logger;
+
     private ?string $eventClass = null;
 
     private ?string $eventName = null;
 
     public function __construct(
         SerializerInterface $serializer,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        LoggerInterface $logger
     ) {
         $this->serializer = $serializer;
         $this->eventDispatcher = $eventDispatcher;
+        $this->logger = $logger;
     }
 
     public function prepare(string $eventClass, string $eventName): void
@@ -59,11 +64,10 @@ class EventConsumerHandler implements ConsumerHandlerInterface
 
             $channel->basic_ack($deliveryTag);
         } catch (Exception $exception) {
-            $channel->basic_nack($deliveryTag, false, true);
+            //TODO: Implement dead letter queue
+            $channel->basic_nack($deliveryTag, false, false);
 
-            //TODO: Add logger
-
-            throw $exception;
+            $this->logger->critical($exception->getMessage());
         }
     }
 }

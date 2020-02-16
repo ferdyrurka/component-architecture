@@ -55,6 +55,7 @@ services:
         arguments:
             - '@Symfony\Component\Serializer\SerializerInterface'
             - '@event_consumer.event_dispatcher'
+            - '@monolog.logger.debug'
 
     # Cli
 
