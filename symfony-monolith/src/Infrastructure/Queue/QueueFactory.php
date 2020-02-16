@@ -5,7 +5,7 @@ namespace App\Infrastructure\Queue;
 
 class QueueFactory
 {
-    private const MONOLITH_QUEUE_PREFIX = 'symfony_monolith';
+    private const MONOLITH_QUEUE_PREFIX = 'monolith';
 
     public static function getMonolithQueueName(int $apiVersion, string $name): string
     {

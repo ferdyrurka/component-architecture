@@ -1,5 +1,5 @@
 parameters:
-    default_communication_rabbit_mq_exchange: 'microservice-communication-exchange'
+    default_communication_rabbit_mq_exchange: 'communication-exchange'
     default_monolith_queue_rabbit_mq_exchange: 'monolith-exchange'
 
 services:
@@ -40,12 +40,41 @@ services:
             - '%default_monolith_queue_rabbit_mq_exchange%'
             - 1
 
+    async.rabbit_mq.default.queue_consumer:
+        class: App\Infrastructure\Queue\RabbitMQQueueConsumer
+        public: true
+        autowire: false
+        arguments:
+            - '@PhpAmqpLib\Connection\AMQPStreamConnection'
+            - '%default_monolith_queue_rabbit_mq_exchange%'
+            - 1
+
+    # Consumer
+
+    App\Infrastructure\Queue\Consumer\EventConsumerHandler:
+        class: App\Infrastructure\Queue\Consumer\EventConsumerHandler
+        public: true
+        autowire: false
+        arguments:
+            - '@Symfony\Component\Serializer\SerializerInterface'
+            - '@event_consumer.event_dispatcher'
+
+    # Cli
+
+    App\UI\CLI\EventQueueCommand:
+        class: App\UI\CLI\EventQueueCommand
+        public: true
+        autowire: false
+        arguments:
+            - '@async.rabbit_mq.default.queue_consumer'
+            - '@App\Infrastructure\Queue\Consumer\EventConsumerHandler'
+
     # Event listener
 
     # Event publisher
 
     async.rabbit_mq.default.event_publisher:
-        class: App\Infrastructure\EventDispatcher\EventPublisher\AsyncEventPublisher
+        class: App\Infrastructure\EventDispatcher\EventPublisher\AsyncRabbitMQEventPublisher
         public: true
         autowire: false
         arguments:
@@ -55,7 +84,18 @@ services:
     sync.symfony.event_publisher:
         class: App\Infrastructure\EventDispatcher\EventPublisher\SyncSymfonyEventPublisher
 
+    async.symfony_from_rabbit_md.event_publisher:
+        class: App\Infrastructure\EventDispatcher\EventPublisher\AsyncSymfonyFromRabbitMQEventPublisher
+
+
     # Event dispatcher
+
+    event_consumer.event_dispatcher:
+        class: App\Infrastructure\EventDispatcher\EventDispatcher
+        public: true
+        autowire: false
+        arguments:
+            - '@async.symfony_from_rabbit_md.event_publisher'
 
     create.book.event_dispatcher:
         class: App\Infrastructure\EventDispatcher\EventDispatcher
@@ -63,6 +103,7 @@ services:
         autowire: false
         arguments:
             - '@async.rabbit_mq.default.event_publisher'
+            - '@sync.symfony.event_publisher'
 
     sync.symfony.event_dispatcher:
         class: App\Infrastructure\EventDispatcher\EventDispatcher

@@ -22,7 +22,7 @@ class AsyncRabbitMQEventPublisher implements EventPublisherInterface
     public function publish(string $eventName, Event $event): void
     {
         $this->queue->publishEvent(
-            sprintf('%s_%s', $eventName, EventPrefix::ASYNC_RABBIT_MQ_PREFIX()->getValue()),
+            $eventName,
             $this->serializer->serialize($event, 'json')
         );
     }

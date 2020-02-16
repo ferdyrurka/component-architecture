@@ -5,6 +5,7 @@ namespace App\Component\Book\Core\UseCase;
 use App\Component\Book\Core\Factory\BookFactory;
 use App\Component\Book\Core\Repository\BookRepositoryInterface;
 use App\Component\Book\IO\BookInput;
+use App\Infrastructure\EventDispatcher\Event;
 use App\Infrastructure\EventDispatcher\EventDispatcherInterface;
 use App\Infrastructure\UnityOfWork\UnityOfWorkInterface;
 
@@ -36,6 +37,8 @@ final class CreateBookApplicationService
 
         $this->bookRepository->add($book);
         $this->unityOfWork->commit();
+
+        $this->eventDispatcher->dispatch('created_book_test_1', new Event());
 
         return $book->getId();
     }
