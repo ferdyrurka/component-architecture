@@ -10,6 +10,9 @@ class SyncSymfonyEventPublisher extends EventDispatcher implements EventPublishe
 {
     public function publish(string $eventName, Event $event): void
     {
-        $this->dispatch($event, $eventName);
+        $this->dispatch(
+            $event,
+            sprintf('%s_%s', $eventName, EventPrefix::SYNC_SYMFONY_PREFIX()->getValue())
+        );
     }
 }

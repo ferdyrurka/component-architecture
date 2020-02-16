@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Queue;
 
-use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Exchange\AMQPExchangeType;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class RabbitMQQueuePublisher implements QueuePublisherInterface
@@ -30,29 +28,13 @@ class RabbitMQQueuePublisher implements QueuePublisherInterface
     {
         $channel = $this->amqpStreamConnection->channel();
 
-        $this->queueAndExchangeDeclare($channel, $eventName);
         $AMQPMessage = $this->createAMQPMessage($body);
 
-        $channel->basic_publish($AMQPMessage, $this->exchange);
-    }
-
-    private function queueAndExchangeDeclare(AMQPChannel $channel, string $eventName): void
-    {
-        $channel->queue_declare(
-            QueueNameFactory::getMonolithName($this->apiVersion, $eventName),
-            false,
-            true,
-            false,
-            false
-        );
-        $channel->exchange_declare(
+        $channel->basic_publish(
+            $AMQPMessage,
             $this->exchange,
-            AMQPExchangeType::DIRECT,
-            false,
-            true,
-            false
+            QueueFactory::getMonolithRoutingKey($this->apiVersion, $eventName)
         );
-        $channel->queue_bind(QueueNameFactory::getMonolithName($this->apiVersion, $eventName), $this->exchange);
     }
 
     private function createAMQPMessage(string $body): AMQPMessage

@@ -7,7 +7,7 @@ use App\Infrastructure\EventDispatcher\Event;
 use App\Infrastructure\Queue\QueuePublisherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class AsyncEventPublisher implements EventPublisherInterface
+class AsyncRabbitMQEventPublisher implements EventPublisherInterface
 {
     private QueuePublisherInterface $queue;
 
@@ -22,7 +22,7 @@ class AsyncEventPublisher implements EventPublisherInterface
     public function publish(string $eventName, Event $event): void
     {
         $this->queue->publishEvent(
-            $eventName,
+            sprintf('%s_%s', $eventName, EventPrefix::ASYNC_RABBIT_MQ_PREFIX()->getValue()),
             $this->serializer->serialize($event, 'json')
         );
     }
