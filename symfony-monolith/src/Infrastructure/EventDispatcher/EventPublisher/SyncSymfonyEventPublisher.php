@@ -4,13 +4,20 @@ declare(strict_types=1);
 namespace App\Infrastructure\EventDispatcher\EventPublisher;
 
 use App\Infrastructure\EventDispatcher\Event;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class SyncSymfonyEventPublisher extends EventDispatcher implements EventPublisherInterface
+class SyncSymfonyEventPublisher implements EventPublisherInterface
 {
+    private EventDispatcherInterface $eventDispatcher;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     public function publish(string $eventName, Event $event): void
     {
-        $this->dispatch(
+        $this->eventDispatcher->dispatch(
             $event,
             sprintf(
                 '%s_%s',

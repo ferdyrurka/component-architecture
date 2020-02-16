@@ -15,9 +15,6 @@ services:
         resource: '../src/Component/Book/UI/Controller'
         tags: ['controller.service_arguments']
 
-    Symfony\Component\String\Slugger\AsciiSlugger:
-        class: Symfony\Component\String\Slugger\AsciiSlugger
-
     # Communication
 
     sync.http.category.communication:
@@ -70,6 +67,16 @@ services:
             - '@App\Infrastructure\Queue\Consumer\EventConsumerHandler'
 
     # Event listener
+
+    App\Component\Book\Core\EventListener\BookCreatedLoggerEventListener:
+        class: App\Component\Book\Core\EventListener\BookCreatedLoggerEventListener
+        public: true
+        autowire: false
+        arguments:
+            - '@monolog.logger.debug'
+        tags:
+            - { name: kernel.event_listener, event: book_created_sync, method: syncLog }
+            - { name: kernel.event_listener, event: book_created_async, method: asyncLog }
 
     # Event publisher
 
@@ -144,3 +151,6 @@ services:
             - '%env(resolve:RABBITMQ_PORT)%'
             - '%env(resolve:RABBITMQ_USER)%'
             - '%env(resolve:RABBITMQ_PASS)%'
+
+    Symfony\Component\String\Slugger\AsciiSlugger:
+        class: Symfony\Component\String\Slugger\AsciiSlugger
