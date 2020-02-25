@@ -9,4 +9,6 @@ interface BookRepositoryInterface
     public function add(Book $book): void;
 
     public function getById(int $id): Book;
+
+    public function remove(Book $book): void;
 }

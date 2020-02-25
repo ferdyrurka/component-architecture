@@ -30,4 +30,9 @@ final class BookRepository extends ServiceEntityRepository implements BookReposi
 
         return $book;
     }
+
+    public function remove(Book $book): void
+    {
+        $this->getEntityManager()->remove($book);
+    }
 }

@@ -6,6 +6,7 @@ use App\Component\Book\Core\Event\BookCreatedEvent;
 use App\Component\Book\Core\Event\EventName;
 use App\Component\Book\Core\Factory\BookFactory;
 use App\Component\Book\Core\Repository\BookRepositoryInterface;
+use App\Component\Book\IO\BookIdInput;
 use App\Component\Book\IO\BookInput;
 use App\Infrastructure\EventDispatcher\EventDispatcherInterface;
 use App\Infrastructure\UnityOfWork\UnityOfWorkInterface;
@@ -45,5 +46,14 @@ final class CreateBookApplicationService
         );
 
         return $book->getId();
+    }
+
+    public function rollback(BookIdInput $bookIdInput): void
+    {
+        $this->bookRepository->remove(
+            $this->bookRepository->getById($bookIdInput->getBookId())
+        );
+
+        $this->unityOfWork->commit();
     }
 }
