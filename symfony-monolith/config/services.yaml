@@ -28,6 +28,10 @@ services:
 
     # Queue
 
+    App\Infrastructure\Queue\RabbitMQQueueFactory:
+        arguments:
+            - '@PhpAmqpLib\Connection\AMQPStreamConnection'
+
     async.rabbit_mq.default.queue_publisher:
         class: App\Infrastructure\Queue\RabbitMQQueuePublisher
         public: true
@@ -42,7 +46,7 @@ services:
         public: true
         autowire: false
         arguments:
-            - '@PhpAmqpLib\Connection\AMQPStreamConnection'
+            - '@App\Infrastructure\Queue\RabbitMQQueueFactory'
             - '%default_monolith_queue_rabbit_mq_exchange%'
             - 1
 

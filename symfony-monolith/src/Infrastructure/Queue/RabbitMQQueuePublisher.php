@@ -33,7 +33,7 @@ class RabbitMQQueuePublisher implements QueuePublisherInterface
         $channel->basic_publish(
             $AMQPMessage,
             $this->exchange,
-            QueueFactory::getMonolithRoutingKey($this->apiVersion, $eventName)
+            NameFactory::getMonolithRoutingKey($this->apiVersion, $eventName)
         );
     }
 

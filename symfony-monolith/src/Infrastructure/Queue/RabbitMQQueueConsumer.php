@@ -12,30 +12,37 @@ class RabbitMQQueueConsumer implements QueueConsumerInterface
 {
     private const CONSUMER_TAG = 'symfony_monolith_consumer';
 
-    private AMQPStreamConnection $amqpStreamConnection;
+    private RabbitMQQueueFactory $rabbitMQQueueFactory;
 
     private int $apiVersion;
 
-    private string $exchange;
+    private string $exchangeName;
 
     public function __construct(
-        AMQPStreamConnection $amqpStreamConnection,
-        string $exchange,
+        RabbitMQQueueFactory $rabbitMQQueueFactory,
+        string $exchangeName,
         int $apiVersion
     ) {
-        $this->amqpStreamConnection = $amqpStreamConnection;
-        $this->exchange = $exchange;
+        $this->rabbitMQQueueFactory = $rabbitMQQueueFactory;
+        $this->exchangeName = $exchangeName;
         $this->apiVersion = $apiVersion;
     }
 
     public function consume(string $eventName, ConsumerHandlerInterface $consumerHandler): void
     {
-        $channel = $this->amqpStreamConnection->channel();
+        $queueName = $this->rabbitMQQueueFactory->declaredQueue($eventName, $this->apiVersion);
+        $this->rabbitMQQueueFactory->declaredDirectExchange($this->exchangeName);
 
-        $this->declaredQueueAndExchange($eventName, $channel);
+        $channel = $this->rabbitMQQueueFactory->getChannel();
+
+        $channel->queue_bind(
+            $queueName,
+            $this->exchangeName,
+            NameFactory::getMonolithRoutingKey($this->apiVersion, $eventName)
+        );
 
         $channel->basic_consume(
-            QueueFactory::getMonolithQueueName($this->apiVersion, $eventName),
+            $queueName,
             self::CONSUMER_TAG,
             false,
             false,
@@ -47,30 +54,5 @@ class RabbitMQQueueConsumer implements QueueConsumerInterface
         while ($channel->is_consuming()) {
             $channel->wait();
         }
-    }
-
-    private function declaredQueueAndExchange(string $eventName, AMQPChannel $channel): void
-    {
-        $queueName = QueueFactory::getMonolithQueueName($this->apiVersion, $eventName);
-
-        $channel->queue_declare(
-            $queueName,
-            false,
-            true,
-            false,
-            false
-        );
-        $channel->exchange_declare(
-            $this->exchange,
-            AMQPExchangeType::DIRECT,
-            false,
-            true,
-            false
-        );
-        $channel->queue_bind(
-            $queueName,
-            $this->exchange,
-            QueueFactory::getMonolithRoutingKey($this->apiVersion, $eventName)
-        );
     }
 }

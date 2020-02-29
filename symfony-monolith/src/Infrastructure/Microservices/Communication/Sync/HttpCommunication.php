@@ -40,7 +40,7 @@ class HttpCommunication implements CommunicationInterface
 
     public function post(string $path, array $body = []): array
     {
-        $bodyJson = json_encode($body);
+        $bodyJson = json_encode($body, JSON_THROW_ON_ERROR, 512);
         $response = $this->sendRequest('POST', $path, ['body' => $bodyJson]);
 
         return $response->toArray();

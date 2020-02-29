@@ -32,7 +32,7 @@ final class CategoryApi implements CategoryApiInterface
             ]
         );
 
-        if (!isset($result['success']) || $result['success'] === false) {
+        if (!isset($result['success']) || (bool) $result['success'] === false) {
             throw new CategoryApiException(
                 sprintf(
                     'Failed add book for book id %s. Category microservices return: %s',

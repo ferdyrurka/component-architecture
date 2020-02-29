@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Queue;
 
-class QueueFactory
+class NameFactory
 {
     private const MONOLITH_QUEUE_PREFIX = 'monolith';
 
