@@ -35,7 +35,7 @@ final class CreateBookApplicationService
 
     public function create(BookInput $bookInput): string
     {
-        $book = $this->bookFactory->create($bookInput->getName());
+        $book = $this->bookFactory->create($bookInput->getName(), $bookInput->getCategoriesIds());
 
         $this->bookRepository->add($book);
         $this->unityOfWork->commit();

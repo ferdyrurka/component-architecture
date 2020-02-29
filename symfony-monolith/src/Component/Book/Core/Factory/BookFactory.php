@@ -18,12 +18,13 @@ class BookFactory
         $this->slugger = $slugger;
     }
 
-    public function create(string $name): Book
+    public function create(string $name, array $categoryIds): Book
     {
         return new Book(
             $this->uuid->generate(),
             $name,
-            $this->slugger->slug($name)
+            $this->slugger->slug($name),
+            $categoryIds
         );
     }
 }
