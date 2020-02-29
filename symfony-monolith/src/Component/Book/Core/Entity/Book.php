@@ -33,11 +33,19 @@ class Book
      */
     private string $slug;
 
-    public function __construct(string $id, string $name, string $slug)
+    /**
+     * @var string[]
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private array $categoryIds;
+
+    public function __construct(string $id, string $name, string $slug, array $categoryIds)
     {
         $this->id = $id;
         $this->name = $name;
         $this->slug = $slug;
+        $this->categoryIds = $categoryIds;
     }
 
     public function getId(): string

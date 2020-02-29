@@ -10,7 +10,7 @@ use App\Component\Category\IO\CategoryInput;
 
 interface CategoryApiInterface
 {
-    public function addBookToCategory(BookIdInput $bookIdInput, CategoriesIdsInput $categoriesIdsInput): void;
+    public function addBookToCategories(BookIdInput $bookIdInput, CategoriesIdsInput $categoriesIdsInput): void;
 
     public function createCategory(CategoryInput $categoryInput): CategoryIdOutput;
 

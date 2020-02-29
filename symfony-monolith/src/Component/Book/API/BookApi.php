@@ -30,7 +30,7 @@ final class BookApi implements BookApiInterface
         $bookIdInput = new BookIdInput($bookId);
 
         try {
-            $this->categoryApi->addBookToCategory(
+            $this->categoryApi->addBookToCategories(
                 $bookIdInput,
                 new CategoriesIdsInput($bookInput->getCategoriesIds())
             );

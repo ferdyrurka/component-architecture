@@ -22,20 +22,21 @@ final class CategoryApi implements CategoryApiInterface
         $this->communication = $communication;
     }
 
-    public function addBookToCategory(BookIdInput $bookIdInput, CategoriesIdsInput $categoriesIdsInput): void
+    public function addBookToCategories(BookIdInput $bookIdInput, CategoriesIdsInput $categoriesIdsInput): void
     {
         $result = $this->communication->post(
-            'add-book',
+            'add-book-categories',
             [
-                'categories_ids' => $categoriesIdsInput->getCategoriesIds(),
-                'book_id' => $bookIdInput->getBookId(),
+                'categoryIds' => $categoriesIdsInput->getCategoriesIds(),
+                'bookId' => $bookIdInput->getBookId(),
             ]
         );
 
         if (!isset($result['success']) || (bool) $result['success'] === false) {
             throw new CategoryApiException(
                 sprintf(
-                    'Failed add book for book id %s. Category microservices return: %s',
+                    'Failed add book to categories for book id %s.
+                    Category microservices return: %s',
                     $bookIdInput->getBookId(),
                     json_encode($result, JSON_THROW_ON_ERROR, 512)
                 )
