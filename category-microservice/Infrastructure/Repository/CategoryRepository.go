@@ -110,3 +110,9 @@ func (c CategoryRepository) GetById(id string) (Entity.Category, error) {
 
 	return category, err
 }
+
+func (c CategoryRepository) PingCategoryDatabase() bool {
+	err := c.db.Ping()
+
+	return err == nil
+}

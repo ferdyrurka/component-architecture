@@ -8,4 +8,5 @@ type CategoryRepositoryInterface interface {
 	GetCountByName(name string) (int, error)
 	FindAll() (*[]Entity.Category, error)
 	GetById(id string) (Entity.Category, error)
+	PingCategoryDatabase() bool
 }
