@@ -1,6 +1,7 @@
 package Controller
 
 import (
+	"ferdyrurka/category/Application/Query"
 	"ferdyrurka/category/Application/UseCase"
 	"ferdyrurka/category/Infrastructure/Http"
 	"ferdyrurka/category/UI/DTO"
@@ -36,11 +37,30 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 	Http.SendCustomJsonResponse(http.StatusOK, Presenter.CreateCategory(id), w)
 }
 
+func AddBookToCategories(w http.ResponseWriter, r *http.Request) {
+	var dto DTO.AddBookToCategoriesDTO
+	err := Http.ReadBody(r, &dto)
+
+	if err != nil {
+		Presenter.CreateCustomError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	err = UseCase.AddBookToCategories(dto)
+
+	if err != nil {
+		Presenter.CreateCustomError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	Http.SendCustomJsonResponse(http.StatusOK, Presenter.AddBookToCategories(), w)
+}
+
 func CheckExistCategory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	dto := DTO.CategoryNameDTO{Name: vars["name"]}
 
-	result, err := UseCase.CheckExistCategory(dto)
+	result, err := Query.CheckExistCategory(dto)
 
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -51,7 +71,7 @@ func CheckExistCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func FindAllCategories(w http.ResponseWriter, r *http.Request) {
-	result, err := UseCase.FindAllCategories()
+	result, err := Query.FindAllCategories()
 
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

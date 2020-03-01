@@ -2,10 +2,9 @@ package Repository
 
 import (
 	"database/sql"
-	"errors"
+	"encoding/json"
 	"ferdyrurka/category/Domain/Entity"
 	"ferdyrurka/category/Infrastructure/Database"
-	"log"
 )
 
 type CategoryRepository struct {
@@ -21,62 +20,93 @@ func NewCategoryRepository() CategoryRepositoryInterface {
 }
 
 func (c CategoryRepository) Save(category Entity.Category) error {
-	stmt, err := c.db.Prepare("INSERT INTO " + c.table + " VALUES (?, ?, NOW())")
+	stmt, err := c.db.Prepare("INSERT INTO " + c.table + " VALUES (?, ?, NOW(), ?)")
 
 	if err != nil {
-		log.Println("Prepare save, error message: " + err.Error())
-		return errors.New("Runtime error: query failed.")
+		return err
 	}
 
-	_, err = stmt.Exec(category.Id, category.Name)
+	bookIdsJson, _ := json.Marshal(category.BookIds)
+
+	_, err = stmt.Exec(category.Id, category.Name, bookIdsJson)
+
+	return err
+}
+
+func (c CategoryRepository) UpdateBookIds(category Entity.Category) error {
+	stmt, err := c.db.Prepare("UPDATE " + c.table + " SET book_ids = ? WHERE id = ?")
 
 	if err != nil {
-		log.Println("Exec save, error message: " + err.Error())
-		return errors.New("Runtime error: exec failed.")
+		return err
 	}
 
-	return nil
+	bookIdsJson, _ := json.Marshal(category.BookIds)
+
+	_, err = stmt.Exec(bookIdsJson, category.Id)
+
+	return err
 }
 
 func (c CategoryRepository) GetCountByName(name string) (int, error) {
 	stmt, err := c.db.Prepare("SELECT COUNT(c.id) FROM " + c.table + " c WHERE c.name = ?")
 
 	if err != nil {
-		log.Println("Prepare GetCountByName, error message: " + err.Error())
-		return 0, errors.New("Runtime error: query failed.")
+		return 0, err
 	}
 
 	result, err := stmt.Query(name)
 
 	if err != nil {
-		log.Println("Exec GetCountByName, error message: " + err.Error())
-		return 0, errors.New("Runtime error: exec failed.")
+		return 0, err
 	}
 
-	var count int
+	count := 0
 	result.Next()
-	_ = result.Scan(&count)
+	err = result.Scan(&count)
 
-	return count, nil
+	return count, err
 }
 
 func (c CategoryRepository) FindAll() (*[]Entity.Category, error) {
-	result, err := c.db.Query("SELECT id, name FROM " + c.table)
+	result, err := c.db.Query("SELECT * FROM " + c.table)
 
 	if err != nil {
-		log.Println("Exec GetAll, error message: " + err.Error())
 		return nil, err
 	}
 
 	var categories []Entity.Category
+	var category Entity.Category
 
 	for result.Next() {
-		var id string
-		var name string
+		category = Entity.Category{}
 
-		result.Scan(&id, &name)
-		categories = append(categories, Entity.Category{Id: id, Name: name})
+		err = result.Scan(&category.Id, &category.Name, &category.CreatedAt, &category.BookIds)
+
+		if err != nil {
+			return nil, err
+		}
+
+		categories = append(categories, category)
 	}
 
 	return &categories, nil
+}
+
+func (c CategoryRepository) GetById(id string) (Entity.Category, error) {
+	result, err := c.db.Query("SELECT id, name, created_at, book_ids FROM " + c.table + " WHERE id = ?", id)
+
+	category := Entity.Category{}
+
+	if err != nil {
+		return category, err
+	}
+
+	var bookIdsJson []uint8
+
+	result.Next()
+	err = result.Scan(&category.Id, &category.Name, &category.CreatedAt, &bookIdsJson)
+
+	json.Unmarshal(bookIdsJson, &category.BookIds)
+
+	return category, err
 }

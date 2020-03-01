@@ -21,3 +21,25 @@ func CreateCategory(dto DTO.CreateCategoryDTO) (string, error) {
 	category := Entity.CreateCategory(dto.Name)
 	return category.Id, repo.Save(category)
 }
+
+func AddBookToCategories(dto DTO.AddBookToCategoriesDTO) error {
+	repo := Repository.NewCategoryRepository()
+
+	for _, categoryId := range dto.CategoryIds {
+		category, err := repo.GetById(categoryId)
+
+		if err != nil {
+			return err
+		}
+
+		Entity.AddBook(dto.BookId, &category)
+
+		err = repo.UpdateBookIds(category)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

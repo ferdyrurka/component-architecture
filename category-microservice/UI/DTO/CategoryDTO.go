@@ -7,3 +7,8 @@ type CreateCategoryDTO struct {
 type CategoryNameDTO struct {
 	Name string
 }
+
+type AddBookToCategoriesDTO struct {
+	CategoryIds []string
+	BookId string
+}

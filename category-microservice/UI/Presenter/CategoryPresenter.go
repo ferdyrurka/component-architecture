@@ -10,6 +10,13 @@ func CreateCategory(id string) map[string]interface{} {
 	return b
 }
 
+func AddBookToCategories() map[string]interface{} {
+	b := make(map[string]interface{})
+	b["success"] = true
+
+	return b
+}
+
 func CheckExist(result bool) map[string]interface{} {
 	b := make(map[string]interface{})
 	b["success"] = true
