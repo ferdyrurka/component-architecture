@@ -2,6 +2,7 @@ package Http
 
 import (
 	"encoding/json"
+	"ferdyrurka/category/Infrastructure/Config"
 	"log"
 	"net/http"
 )
@@ -31,4 +32,27 @@ func SendCustomJsonResponse(code int, v interface{}, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	_, _ = w.Write(b)
+}
+
+func SendErrorJsonResponse(code int, err error, prodErr error, w http.ResponseWriter) {
+	var r JsonResponse
+	if Config.GetConfig().Environment != "prod" {
+		r = JsonResponse{
+			HttpCode: code,
+			Body: JsonBody{
+				Result:  err.Error(),
+				Success: false,
+			},
+		}
+	} else {
+		r = JsonResponse{
+			HttpCode: code,
+			Body: JsonBody{
+				Result:  prodErr.Error(),
+				Success: false,
+			},
+		}
+	}
+
+	SendJsonResponse(r, w)
 }

@@ -7,6 +7,7 @@ import (
 
 type config struct {
 	MysqlUrl string `env:"MYSQL_URL,required"`
+	Environment string `env:"ENV,required"`
 }
 
 func GetConfig() config {
@@ -16,5 +17,13 @@ func GetConfig() config {
 		fmt.Printf("%+v\n", err)
 	}
 
+	setDefault(&conf)
+
 	return conf
+}
+
+func setDefault(conf *config) {
+	if len(conf.Environment) == 0 {
+		conf.Environment = "dev"
+	}
 }

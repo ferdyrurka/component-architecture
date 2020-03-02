@@ -1,6 +1,7 @@
 package Controller
 
 import (
+	"errors"
 	"ferdyrurka/category/Application/Query"
 	"ferdyrurka/category/Application/UseCase"
 	"ferdyrurka/category/Infrastructure/Http"
@@ -16,21 +17,33 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 	err := Http.ReadBody(r, &dto)
 
 	if err != nil {
-		Presenter.CreateCustomError(err, http.StatusBadRequest, w)
+		Http.SendErrorJsonResponse(
+			http.StatusBadRequest,
+			err,
+			errors.New("Send bad request!"),
+			w)
 		return
 	}
 
 	err = Validator.ValidateCreateCategory(dto)
 
 	if err != nil {
-		Presenter.CreateCustomError(err, http.StatusBadRequest, w)
+		Http.SendErrorJsonResponse(
+			http.StatusBadRequest,
+			err,
+			errors.New("Send bad request!"),
+			w)
 		return
 	}
 
 	id, err := UseCase.CreateCategory(dto)
 
 	if err != nil {
-		Presenter.CreateCustomError(err, http.StatusBadRequest, w)
+		Http.SendErrorJsonResponse(
+			http.StatusInternalServerError,
+			err,
+			errors.New("Internal sever error!"),
+			w)
 		return
 	}
 
@@ -42,14 +55,22 @@ func AddBookToCategories(w http.ResponseWriter, r *http.Request) {
 	err := Http.ReadBody(r, &dto)
 
 	if err != nil {
-		Presenter.CreateCustomError(err, http.StatusBadRequest, w)
+		Http.SendErrorJsonResponse(
+			http.StatusBadRequest,
+			err,
+			errors.New("Send bad request!"),
+			w)
 		return
 	}
 
 	err = UseCase.AddBookToCategories(dto)
 
 	if err != nil {
-		Presenter.CreateCustomError(err, http.StatusBadRequest, w)
+		Http.SendErrorJsonResponse(
+			http.StatusInternalServerError,
+			err,
+			errors.New("Internal sever error!"),
+			w)
 		return
 	}
 
@@ -63,7 +84,11 @@ func CheckExistCategory(w http.ResponseWriter, r *http.Request) {
 	result, err := Query.CheckExistCategory(dto)
 
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		Http.SendErrorJsonResponse(
+			http.StatusInternalServerError,
+			err,
+			errors.New("Internal sever error!"),
+			w)
 		return
 	}
 
@@ -74,7 +99,11 @@ func FindAllCategories(w http.ResponseWriter, r *http.Request) {
 	result, err := Query.FindAllCategories()
 
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		Http.SendErrorJsonResponse(
+			http.StatusInternalServerError,
+			err,
+			errors.New("Internal sever error!"),
+			w)
 		return
 	}
 
