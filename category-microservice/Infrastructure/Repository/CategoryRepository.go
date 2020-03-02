@@ -76,15 +76,18 @@ func (c CategoryRepository) FindAll() (*[]Entity.Category, error) {
 
 	var categories []Entity.Category
 	var category Entity.Category
+	var bookIdsJson []uint8
 
 	for result.Next() {
 		category = Entity.Category{}
 
-		err = result.Scan(&category.Id, &category.Name, &category.CreatedAt, &category.BookIds)
+		err = result.Scan(&category.Id, &category.Name, &category.CreatedAt, &bookIdsJson)
 
 		if err != nil {
 			return nil, err
 		}
+
+		json.Unmarshal(bookIdsJson, &category.BookIds)
 
 		categories = append(categories, category)
 	}
@@ -93,7 +96,7 @@ func (c CategoryRepository) FindAll() (*[]Entity.Category, error) {
 }
 
 func (c CategoryRepository) GetById(id string) (Entity.Category, error) {
-	result, err := c.db.Query("SELECT id, name, created_at, book_ids FROM " + c.table + " WHERE id = ?", id)
+	result, err := c.db.Query("SELECT * FROM " + c.table + " WHERE id = ?", id)
 
 	category := Entity.Category{}
 

@@ -6,7 +6,7 @@ namespace App\Infrastructure\EventDispatcher\EventPublisher;
 use App\Infrastructure\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AsyncSymfonyFromRabbitMQEventPublisher implements EventPublisherInterface
+class FromRabbitMQEventPublisher implements EventPublisherInterface
 {
     private EventDispatcherInterface $eventDispatcher;
 
@@ -22,7 +22,7 @@ class AsyncSymfonyFromRabbitMQEventPublisher implements EventPublisherInterface
             sprintf(
                 '%s_%s',
                 $eventName,
-                EventPrefix::ASYNC_FROM_RABBIT_MQ_PREFIX()->getValue()
+                EventPrefix::FROM_RABBIT_MQ_PREFIX()->getValue()
             )
         );
     }

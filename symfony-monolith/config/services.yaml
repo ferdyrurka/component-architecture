@@ -96,8 +96,8 @@ services:
     sync.symfony.event_publisher:
         class: App\Infrastructure\EventDispatcher\EventPublisher\SyncSymfonyEventPublisher
 
-    async.symfony_from_rabbit_md.event_publisher:
-        class: App\Infrastructure\EventDispatcher\EventPublisher\AsyncSymfonyFromRabbitMQEventPublisher
+    async.from_rabbit_md.event_publisher:
+        class: App\Infrastructure\EventDispatcher\EventPublisher\FromRabbitMQEventPublisher
 
 
     # Event dispatcher
@@ -107,7 +107,7 @@ services:
         public: true
         autowire: false
         arguments:
-            - '@async.symfony_from_rabbit_md.event_publisher'
+            - '@async.from_rabbit_md.event_publisher'
 
     create.book.event_dispatcher:
         class: App\Infrastructure\EventDispatcher\EventDispatcher

@@ -25,7 +25,7 @@ final class CategoryApi implements CategoryApiInterface
     public function addBookToCategories(BookIdInput $bookIdInput, CategoriesIdsInput $categoriesIdsInput): void
     {
         $result = $this->communication->post(
-            'add-book-categories',
+            'add-book-to-categories',
             [
                 'categoryIds' => $categoriesIdsInput->getCategoriesIds(),
                 'bookId' => $bookIdInput->getBookId(),

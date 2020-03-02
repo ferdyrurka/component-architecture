@@ -6,8 +6,8 @@ use App\Component\Book\Core\UseCase\CreateBookApplicationService;
 use App\Component\Book\IO\BookIdInput;
 use App\Component\Book\IO\BookInput;
 use App\Component\Category\API\CategoryApiInterface;
-use App\Component\Category\Exception\CategoryApiException;
 use App\Component\Category\IO\CategoriesIdsInput;
+use Exception;
 
 final class BookApi implements BookApiInterface
 {
@@ -32,9 +32,9 @@ final class BookApi implements BookApiInterface
         try {
             $this->categoryApi->addBookToCategories(
                 $bookIdInput,
-                new CategoriesIdsInput($bookInput->getCategoriesIds())
+                new CategoriesIdsInput($bookInput->getCategoryIds())
             );
-        } catch (CategoryApiException $exception) {
+        } catch (Exception $exception) {
             $this->createBookApplicationService->rollback($bookIdInput);
 
             throw $exception;

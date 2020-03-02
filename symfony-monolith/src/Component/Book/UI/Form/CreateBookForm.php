@@ -32,7 +32,7 @@ class CreateBookForm extends AbstractType
                     new Regex('/^([a-z|A-Z|0-9| |.,-]){1,255}$/'),
                 ]
             ])
-            ->add('categories_id', ChoiceType::class, [
+            ->add('category_ids', ChoiceType::class, [
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),

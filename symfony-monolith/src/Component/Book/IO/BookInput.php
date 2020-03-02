@@ -7,12 +7,12 @@ class BookInput
 {
     private string $name;
 
-    private array $categoriesIds;
+    private array $categoryIds;
 
-    public function __construct(string $name, array $categoriesIds)
+    public function __construct(string $name, array $categoryIds)
     {
         $this->name = $name;
-        $this->categoriesIds = $categoriesIds;
+        $this->categoryIds = $categoryIds;
     }
 
     public function getName(): string
@@ -25,13 +25,13 @@ class BookInput
         $this->name = $name;
     }
 
-    public function getCategoriesIds(): array
+    public function getCategoryIds(): array
     {
-        return $this->categoriesIds;
+        return $this->categoryIds;
     }
 
-    public function setCategoriesIds(array $categoriesIds): void
+    public function setCategoryIds(array $categoryIds): void
     {
-        $this->categoriesIds = $categoriesIds;
+        $this->categoryIds = $categoryIds;
     }
 }
