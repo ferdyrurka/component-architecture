@@ -9,9 +9,9 @@ class BookInput
 
     private array $categoryIds;
 
-    public function __construct(string $name, array $categoryIds)
+    public function __construct(string $name = '', array $categoryIds = [])
     {
-        $this->name = $name;
+        $this->name        = $name;
         $this->categoryIds = $categoryIds;
     }
 
@@ -20,18 +20,8 @@ class BookInput
         return $this->name;
     }
 
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
     public function getCategoryIds(): array
     {
         return $this->categoryIds;
-    }
-
-    public function setCategoryIds(array $categoryIds): void
-    {
-        $this->categoryIds = $categoryIds;
     }
 }
