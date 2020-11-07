@@ -1,5 +1,12 @@
-# Component architecture
+# Modular monolith architecture
 
-## URI
+Project present example and easy implementaion modular monolith arvhitecture. 
 
-- [Create book](http://lukaszstaniszewski.local:8000/create-book)
+Microservices writted in golang.
+Monolith writted in PHP with symfony5.
+
+## Start project
+
+```sh
+docker-compose up -f docker-compose.local.yml -d 
+```
