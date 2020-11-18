@@ -14,15 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class CreateBookController extends AbstractController
 {
     /**
-     * @param Request $request
-     * @return array
-     *
      * @Route("/create-book", methods={"GET"})
      * @Template("book/create-book.html.twig")
      */
     public function createView(Request $request): array
     {
-        $form = $this->createForm(CreateBookForm::class, new BookInput('', []));
+        $form = $this->createForm(CreateBookForm::class, new BookInput());
         $form->handleRequest($request);
 
         return [
@@ -31,15 +28,11 @@ class CreateBookController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param BookApiInterface $bookApi
-     * @return Response
-     *
      * @Route("/create-book", methods={"POST"})
      */
     public function create(Request $request, BookApiInterface $bookApi): Response
     {
-        $form = $this->createForm(CreateBookForm::class, new BookInput('', []));
+        $form = $this->createForm(CreateBookForm::class, new BookInput());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
